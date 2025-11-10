@@ -1,6 +1,8 @@
+#![allow(unused)]
+#![allow(dead_code)]
+
 use std::fmt::Display;
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TreeNode<T> {
     pub data: T,
@@ -8,13 +10,11 @@ pub struct TreeNode<T> {
     pub right: Option<Box<TreeNode<T>>>,
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
 pub struct BinarySearchTree<T> {
     pub root: Option<Box<TreeNode<T>>>,
 }
 
-#[allow(dead_code)]
 impl<T: Ord + Display> TreeNode<T> {
     pub fn inorder_traverse(&self) {
         /*
@@ -80,7 +80,6 @@ impl<T: Ord + Display> TreeNode<T> {
     }
 }
 
-#[allow(dead_code)]
 impl<T: Ord + Display> BinarySearchTree<T> {
     pub fn new() -> Self {
         BinarySearchTree { root: Option::None }

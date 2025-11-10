@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub trait Queue {
     type Item;
     fn queue(&mut self, item: Self::Item);
