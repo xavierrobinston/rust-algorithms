@@ -1,159 +1,90 @@
 #![allow(unused)]
 #![allow(dead_code)]
 
-use std::fmt::Display;
+use std::{default, fmt::Display};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct ListNode<T> {
-    pub data: T,
-    pub prev: Option<Box<ListNode<T>>>,
-    pub next: Option<Box<ListNode<T>>>,
+pub struct ListNode {
+    pub value: i32,
+    pub prev: Option<Box<ListNode>>,
+    pub next: Option<Box<ListNode>>,
 }
 
 #[derive(Debug)]
-pub struct BinarySearchTree<T> {
-    pub root: Option<Box<ListNode<T>>>,
+pub struct LinkedList {
+    pub head: Option<Box<ListNode>>,
 }
 
-impl<T: Ord + Display> ListNode<T> {
-    pub fn inorder_traverse(&self) {
-        if let Some(node) = &self.prev {
-            node.inorder_traverse()
-        }
-
-        println!("{}", self.data);
-
-        if let Some(node) = &self.next {
-            node.inorder_traverse()
-        }
-    }
-
-    pub fn insert_after(&mut self, value: T) {
-        if value < self.data {
-            match &mut self.prev {
-                Some(node) => node.insert_after(value),
-                None => {
-                    self.prev = Some(Box::new(ListNode {
-                        data: value,
-                        prev: None,
-                        next: None,
-                    }))
-                }
-            }
-        } else if value > self.data {
-            match &mut self.next {
-                Some(node) => node.insert_after(value),
-                None => {
-                    self.next = Some(Box::new(ListNode {
-                        data: value,
-                        prev: None,
-                        next: None,
-                    }))
-                }
-            }
-        }
-    }
-
-    pub fn search(&self, value: T) -> Option<&ListNode<T>> {
-        if value < self.data {
-            match &self.prev {
-                Some(prev) => prev.search(value),
-                None => None,
-            }
-        } else if value > self.data {
-            match &self.next {
-                Some(next) => next.search(value),
-                None => None,
-            }
-        } else {
-            return Some(self);
+impl ListNode {
+    pub fn new(value: i32) -> Self {
+        ListNode {
+            value: value,
+            prev: Option::None,
+            next: Option::None,
         }
     }
 }
-
-impl<T: Ord + Display> BinarySearchTree<T> {
+impl LinkedList {
     pub fn new() -> Self {
-        BinarySearchTree { root: Option::None }
+        LinkedList { head: Option::None }
     }
 
-    pub fn inorder_traverse(&self) {
-        match &self.root {
-            Some(node) => node.inorder_traverse(),
-            None => println!("tree is empty"),
+    pub fn empty(&self) -> bool {
+        match &self.head {
+            None => false,
+            default => true,
         }
     }
 
-    pub fn insert(&mut self, value: T) {
-        match &mut self.root {
-            Some(node) => node.insert_after(value),
-            None => {
-                self.root = Some(Box::new(ListNode {
-                    data: value,
+    pub fn add_head(&mut self, value: i32) {
+        match self.head.take() {
+            None => self.head = Some(Box::new(ListNode::new(value))),
+            Some(item) => {
+                let new_head = Box::new(ListNode {
+                    value: value,
+                    next: Some(item),
                     prev: None,
-                    next: None,
-                }))
+                });
+                self.head = Some(new_head);
             }
         }
     }
 
-    pub fn search(&self, _: T) {
-        match &self.root {
-            Some(node) => println!("{}", node.data),
-            None => println!("tree is empty"),
+    pub fn remove_head(&mut self) -> Option<i32> {
+        match self.head.take() {
+            None => None,
+            Some(item) => {
+                self.head = item.next;
+                Some(item.value)
+            }
         }
     }
-}
 
-pub fn linked_test() {
-    let root = ListNode {
-        data: 5,
-        prev: Some(Box::new(ListNode {
-            data: 3,
-            prev: Some(Box::new(ListNode {
-                data: 1,
-                prev: None,
-                next: None,
-            })),
-            next: Some(Box::new(ListNode {
-                data: 4,
-                prev: None,
-                next: None,
-            })),
-        })),
-        next: Some(Box::new(ListNode {
-            data: 8,
-            prev: Some(Box::new(ListNode {
-                data: 7,
-                prev: None,
-                next: None,
-            })),
-            next: Some(Box::new(ListNode {
-                data: 10,
-                prev: None,
-                next: None,
-            })),
-        })),
-    };
-
-    let btree = BinarySearchTree::<i32> {
-        root: Some(Box::new(root)),
-    };
-
-    btree.inorder_traverse();
+    pub fn peek_head(&self) -> Option<i32> {
+        match &self.head {
+            None => None,
+            Some(item) => Some(item.value),
+        }
+    }
 }
 
 pub fn linkedlist_create_test() {
-    let mut bst = BinarySearchTree::new();
+    let mut list = LinkedList::new();
 
-    // Insert values
-    bst.insert(5);
-    bst.insert(3);
-    bst.insert(8);
-    bst.insert(1);
-    bst.insert(4);
-    bst.insert(7);
-    bst.insert(10);
+    // Add nodes to the head
+    list.add_head(10);
+    list.add_head(20);
+    list.add_head(30);
 
-    println!("In-order traversal (sorted):");
-    bst.inorder_traverse();
+    println!("{:#?}", list);
+
+    let mut head_value = list.remove_head().unwrap_or(-1);
+    println!("{:#?}", head_value);
+
+    println!("After head removed: {:#?}", list);
+
+    head_value = list.peek_head().unwrap_or(-1);
+    println!("{:#?}", head_value);
+
+    println!("After head peeked: {:#?}", list);
 }
