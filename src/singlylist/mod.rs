@@ -6,12 +6,11 @@ use std::{default, fmt::Display};
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ListNode {
     pub value: i32,
-    pub prev: Option<Box<ListNode>>,
     pub next: Option<Box<ListNode>>,
 }
 
 #[derive(Debug)]
-pub struct LinkedList {
+pub struct SinglyLinkedList {
     pub head: Option<Box<ListNode>>,
 }
 
@@ -19,14 +18,13 @@ impl ListNode {
     pub fn new(value: i32) -> Self {
         ListNode {
             value: value,
-            prev: Option::None,
             next: Option::None,
         }
     }
 }
-impl LinkedList {
+impl SinglyLinkedList {
     pub fn new() -> Self {
-        LinkedList { head: Option::None }
+        SinglyLinkedList { head: Option::None }
     }
 
     pub fn empty(&self) -> bool {
@@ -40,12 +38,11 @@ impl LinkedList {
         match self.head.take() {
             None => self.head = Some(Box::new(ListNode::new(value))),
             Some(item) => {
-                let new_head = Box::new(ListNode {
+                let new_node = Box::new(ListNode {
                     value: value,
                     next: Some(item),
-                    prev: None,
                 });
-                self.head = Some(new_head);
+                self.head = Some(new_node);
             }
         }
     }
@@ -68,8 +65,8 @@ impl LinkedList {
     }
 }
 
-pub fn linkedlist_create_test() {
-    let mut list = LinkedList::new();
+pub fn test_create_singlylist() {
+    let mut list = SinglyLinkedList::new();
 
     // Add nodes to the head
     list.add_head(10);
@@ -85,6 +82,12 @@ pub fn linkedlist_create_test() {
 
     head_value = list.peek_head().unwrap_or(-1);
     println!("{:#?}", head_value);
+
+    if let Some(head_value) = list.peek_head() {
+        println!("Head value: {}", head_value);
+    } else {
+        println!("List is empty");
+    }
 
     println!("After head peeked: {:#?}", list);
 }
